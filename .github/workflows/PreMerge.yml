@@ -1,0 +1,21 @@
+name: PreMerge                 # ワークフローの名前
+on:  
+  pull_request:         # ワークフローが動作するトリガー、この記載ではPRが作成されたときに動作する
+    branches:
+      - main         # PRのtarget branchがmainのときに動作する                
+  pre-merge:                   # jobのID
+    runs-on: ubuntu-latest       # ランナー（ジョブが動作するDocker Image）、今回はubuntuの最新のイメージを利用
+    steps:                       # ここからjobの中で実行されるコマンドですよーという意味
+      - name: Checkout repository   
+        uses: actions/checkout@v4   # uses: actions でGitHubが用意しているアクションを実施します
+                                  # ここではcheckoutを実施する指示です。@v4はcheckoutを行うactionのバージョン
+                                  # この記載でPR元のbranchのコードがcheckoutされます
+      - name: Setup Node.js         # Node.jsのセットアップもActionが用意されています
+        uses: actions/setup-node@v3
+        with:
+          node-version: '23'        # セットアップするバージョンを指定できます
+      - name: Install dependencies
+        run: cd frontend && npm install
+
+      - name: Build the project
+        run: cd frontend && npm run build   
